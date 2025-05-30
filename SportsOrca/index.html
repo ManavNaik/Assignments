@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Matches</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-blue-900 text-white font-poppins">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-black bg-opacity-50 backdrop-blur-md py-6 sticky top-0 z-50">
+            <div class="container mx-auto px-4">
+                <h1 class="text-4xl font-bold text-center animate-pulse">Upcoming Basketball Matches</h1>
+            </div>
+        </header>
+
+        <main class="flex-grow container mx-auto px-4 py-12">
+            <div id="matches" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </main>
+
+        <footer class="bg-black bg-opacity-50 py-4">
+            <p class="text-center text-sm">© 2025 Basketball Matches. Powered by xAI.</p>
+        </footer>
+    </div>
+
+    <script>
+        const data = {
+        "status": "success",
+        "response": {
+            "Sorting": ["Stages"],
+            "Stages": [
+                {"Sid":"13252","Snm":"Classification Matches","Sds":"Classification Matches","Scd":"classification-matches","Cnm":"World Cup","CnmT":"world-cup","Ccd":"world-cup","Cid":"378","Scu":1,"Spid":23},
+                {"Sid":"19348","Snm":"Placement matches","Scd":"placement-matches","Cnm":"Asia U18 Championship","CnmT":"asia-u18-championship","Ccd":"asia-u18-championship","Cid":"526","Scu":1,"Spid":23},
+                {"Sid":"21321","Snm":"Basket Ligaen: Placement Matches","Sds":"Basket Ligaen: Placement Matches","Scd":"basket-ligaen-placement-matches","Cnm":"Denmark","CnmT":"denmark","Ccd":"denmark","Cid":"383","Scu":1,"Spid":23},
+                {"Sid":"20991","Snm":"Kvinneligaen Placement Matches","Scd":"kvinneligaen-placement-matches","Cnm":"Norway","CnmT":"norway","Ccd":"norway","Cid":"373","Scu":1,"Spid":23},
+                {"Sid":"21366","Snm":"Placement matches","Sds":"Placement matches","Scd":"placement-matches","Cnm":"EuroBasket Women","CnmT":"eurobasket-women","Ccd":"eurobasket-women","Cid":"412","Scu":1,"Spid":23},
+                {"Sid":"18832","Snm":"Division A: Placement Matches","Scd":"division-a-placement-matches","Cnm":"EuroBasket U18","CnmT":"eurobasket-u18","Ccd":"eurobasket-u18","Cid":"514","Scu":1,"Spid":23},
+                {"Sid":"18834","Snm":"Division B: Placement Matches","Scd":"division-b-placement-matches","Cnm":"EuroBasket U18","CnmT":"eurobasket-u18","Ccd":"eurobasket-u18","Cid":"514","Scu":1,"Spid":23},
+                {"Sid":"18902","Snm":"Placement Matches","Scd":"placement-matches","Cnm":"Women's EuroBasket U18","CnmT":"womens-eurobasket-u18","Ccd":"eurobasket-u18-women","Cid":"515","Scu":1,"Spid":23},
+                {"Sid":"18767","Snm":"Division C: Placement Matches","Scd":"division-c-placement-matches","Cnm":"EuroBasket U18","CnmT":"eurobasket-u18","Ccd":"eurobasket-u18","Cid":"514","Scu":1,"Spid":23},
+                {"Sid":"18687","Snm":"Las Vegas Summer League: Placement Matches","Scd":"las-vegas-summer-league-placement-matches","Cnm":"NBA","CnmT":"nba","Ccd":"nba","Cid":"362","Scu":1,"Spid":23}
+            ]
+        }
+    };
+
+    const matchesContainer = document.getElementById('matches');
+
+    function displayMatches() {
+        data.response.Stages.forEach((stage, index) => {
+            const card = document.createElement('div');
+            card.className = 'bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 opacity-0';
+            card.innerHTML = `
+                <h2 class="text-2xl font-semibold mb-2 text-blue-400">${stage.Cnm}</h2>
+                <p class="text-lg">${stage.Snm}</p>
+                <p class="text-sm text-gray-400 mt-2">Stage ID: ${stage.Sid}</p>
+                <p class="text-sm text-gray-400">Category: ${stage.CnmT}</p>
+                <button class="view-details mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105" data-cnm="${stage.Cnm}">View Details</button>
+            `;
+            matchesContainer.appendChild(card);
+
+            gsap.from(card, {
+                opacity: 0,
+                y: 50,
+                duration: 0.8,
+                delay: index * 0.2,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        displayMatches();
+
+        gsap.from('header', {
+            y: -100,
+            opacity: 0,
+            duration: 1,
+            ease: 'bounce.out'
+        });
+
+        gsap.from('footer', {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            delay: 0.5,
+            ease: 'power2.out'
+        });
+
+        matchesContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('view-details')) {
+                const cnm = e.target.dataset.cnm;
+                const searchUrl = `https://www.google.com/search?q=basketball+${encodeURIComponent(cnm)}`;
+                window.open(searchUrl, '_blank');
+            }
+        });
+    });
+    </script>
+</body>
+</html>
